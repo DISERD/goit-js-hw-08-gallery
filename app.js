@@ -8,70 +8,70 @@ const galleryItems = [
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2019/05/14/22/05/container-4203677__340.jpg',
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2019/05/14/22/05/container-4203677_1280.jpg',
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Container Cargo Ship',
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2019/05/16/09/47/beach-4206785__340.jpg',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2019/05/16/09/47/beach-4206785_1280.jpg',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Aerial Beach View',
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2016/11/18/16/19/flowers-1835619__340.jpg',
+      'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2016/11/18/16/19/flowers-1835619_1280.jpg',
+      'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Flower Blooms',
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2018/09/13/10/36/mountains-3674334__340.jpg',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2018/09/13/10/36/mountains-3674334_1280.jpg',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Alpine Mountains',
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2019/05/16/23/04/landscape-4208571__340.jpg',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2019/05/16/23/04/landscape-4208571_1280.jpg',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Mountain Lake Sailing',
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2019/05/16/21/10/landscape-4208255__340.jpg',
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2019/05/16/21/10/landscape-4208255_1280.jpg',
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Alpine Spring Meadows',
   },
   {
     preview:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80',
+      'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Nature Landscape',
   },
   {
     preview:
-      'https://cdn.pixabay.com/photo/2019/05/17/09/27/the-alps-4209272__340.jpg',
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&h=400&q=80',
     original:
-      'https://cdn.pixabay.com/photo/2019/05/17/09/27/the-alps-4209272_1280.jpg',
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1280&h=850&q=80',
     description: 'Lighthouse Coast Sea',
   },
 ];
 
-// Пошук елементів DOM
 const galleryContainer = document.querySelector('.js-gallery');
 const lightbox = document.querySelector('.js-lightbox');
 const lightboxImage = document.querySelector('.lightbox__image');
 const closeBtn = document.querySelector('button[data-action="close-lightbox"]');
 const overlay = document.querySelector('.lightbox__overlay');
 
-// Рендер розмітки
+let currentIndex = 0;
+
 const galleryMarkup = createGalleryMarkup(galleryItems);
 galleryContainer.innerHTML = galleryMarkup;
 
@@ -94,7 +94,6 @@ function createGalleryMarkup(items) {
     .join('');
 }
 
-// Делегування
 galleryContainer.addEventListener('click', onGalleryClick);
 
 function onGalleryClick(event) {
@@ -106,35 +105,58 @@ function onGalleryClick(event) {
   }
 
   const largeImageUrl = event.target.dataset.source;
-  const imageAlt = event.target.alt;
 
-  openModal(largeImageUrl, imageAlt);
+  currentIndex = galleryItems.findIndex(item => item.original === largeImageUrl);
+
+  openModal();
 }
 
-// Відкриття модалки
-function openModal(url, alt) {
+function openModal() {
   lightbox.classList.add('is-open');
-  lightboxImage.src = url;
-  lightboxImage.alt = alt;
 
-  window.addEventListener('keydown', onEscKeyPress);
+  updateModalImage(currentIndex);
+
+  window.addEventListener('keydown', onKeyPress);
 }
 
-// Закриття модалки
 function closeModal() {
   lightbox.classList.remove('is-open');
+
   lightboxImage.src = '';
   lightboxImage.alt = '';
 
-  window.removeEventListener('keydown', onEscKeyPress);
+  window.removeEventListener('keydown', onKeyPress);
 }
 
-// Події закриття
-closeBtn.addEventListener('click', closeModal);
-overlay.addEventListener('click', closeModal);
 
-function onEscKeyPress(event) {
+function updateModalImage(index) {
+  lightboxImage.src = galleryItems[index].original;
+  lightboxImage.alt = galleryItems[index].description;
+}
+
+
+function onKeyPress(event) {
+
   if (event.code === 'Escape') {
     closeModal();
   }
+
+  if (event.code === 'ArrowRight') {
+    currentIndex += 1;
+    if (currentIndex >= galleryItems.length) {
+      currentIndex = 0; 
+    }
+    updateModalImage(currentIndex);
+  }
+
+  if (event.code === 'ArrowLeft') {
+    currentIndex -= 1;
+    if (currentIndex < 0) {
+      currentIndex = galleryItems.length - 1; 
+    }
+    updateModalImage(currentIndex);
+  }
 }
+
+closeBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
