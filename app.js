@@ -136,23 +136,25 @@ function updateModalImage(index) {
 
 
 function onKeyPress(event) {
+  const key = event.key;
+  const code = event.code;
 
-  if (event.code === 'Escape') {
+  if (key === 'Escape' || code === 'Escape') {
     closeModal();
   }
 
-  if (event.code === 'ArrowRight') {
+  if (key === 'ArrowRight' || code === 'ArrowRight') {
     currentIndex += 1;
     if (currentIndex >= galleryItems.length) {
-      currentIndex = 0; 
+      currentIndex = 0;
     }
     updateModalImage(currentIndex);
   }
 
-  if (event.code === 'ArrowLeft') {
+  if (key === 'ArrowLeft' || code === 'ArrowLeft') {
     currentIndex -= 1;
     if (currentIndex < 0) {
-      currentIndex = galleryItems.length - 1; 
+      currentIndex = galleryItems.length - 1;
     }
     updateModalImage(currentIndex);
   }
