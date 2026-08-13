@@ -77,7 +77,7 @@ galleryContainer.innerHTML = galleryMarkup;
 
 function createGalleryMarkup(items) {
   return items
-    .map(({ preview, original, description }) => {
+    .map(({ preview, original, description }, index) => {
       return `
         <li class="gallery__item">
           <a class="gallery__link" href="${original}">
@@ -85,6 +85,7 @@ function createGalleryMarkup(items) {
               class="gallery__image"
               src="${preview}"
               data-source="${original}"
+              data-index="${index}"
               alt="${description}"
             />
           </a>
@@ -104,9 +105,7 @@ function onGalleryClick(event) {
     return;
   }
 
-  const largeImageUrl = event.target.dataset.source;
-
-  currentIndex = galleryItems.findIndex(item => item.original === largeImageUrl);
+  currentIndex = Number(event.target.dataset.index);
 
   openModal();
 }
@@ -128,12 +127,10 @@ function closeModal() {
   window.removeEventListener('keydown', onKeyPress);
 }
 
-
 function updateModalImage(index) {
   lightboxImage.src = galleryItems[index].original;
   lightboxImage.alt = galleryItems[index].description;
 }
-
 
 function onKeyPress(event) {
   const key = event.key;
@@ -141,22 +138,19 @@ function onKeyPress(event) {
 
   if (key === 'Escape' || code === 'Escape') {
     closeModal();
+    return;
   }
 
   if (key === 'ArrowRight' || code === 'ArrowRight') {
-    currentIndex += 1;
-    if (currentIndex >= galleryItems.length) {
-      currentIndex = 0;
-    }
+    currentIndex = (currentIndex + 1) % galleryItems.length;
     updateModalImage(currentIndex);
+    return;
   }
 
   if (key === 'ArrowLeft' || code === 'ArrowLeft') {
-    currentIndex -= 1;
-    if (currentIndex < 0) {
-      currentIndex = galleryItems.length - 1;
-    }
+    currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
     updateModalImage(currentIndex);
+    return;
   }
 }
 
